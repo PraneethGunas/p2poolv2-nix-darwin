@@ -1,0 +1,27 @@
+--- a/mujina-miner/src/board/bitaxe.rs
++++ b/mujina-miner/src/board/bitaxe.rs
+@@ -52,7 +52,7 @@
+         UsbDeviceInfo,
+         serial::{SerialReader, SerialStream, SerialWriter},
+     },
+-    types::{Ratio, Temperature, Voltage},
++    types::{Frequency, Ratio, Temperature, Voltage},
+ };
+
+ use super::{
+@@ -171,8 +171,13 @@
+
+     let thread = BM13xxThread::new(
+         thread_name,
+-        chip_config::bm1370(),
+-        TopologySpec::single_domain(1),
++        // Bitaxe Gamma Duo (650): two BM1370 chips at ESP-Miner's default
++        // frequency for the board.
++        chip_config::ChipConfig {
++            default_freq: Frequency::from_mhz(400.0),
++            ..chip_config::bm1370()
++        },
++        TopologySpec::single_domain(2),
+         data_reader,
+         data_writer,
+         peripherals,
